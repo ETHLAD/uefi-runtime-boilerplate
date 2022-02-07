@@ -27,11 +27,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c4257a6ffb364d7f938c0311733a793327639b3d34c0b4af0b3bb775ef3e1b8"
 
 [[package]]
+name = "r-efi-alloc"
+version = "0.1.0"
+dependencies = [
+ "r-efi",
+]
+
+[[package]]
 name = "uefi-runtime-boilerplate"
 version = "0.1.0"
 dependencies = [
  "atomic_refcell",
  "r-efi",
+ "r-efi-alloc",
  "x86_64",
 ]
 

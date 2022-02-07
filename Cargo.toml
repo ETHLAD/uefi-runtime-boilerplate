@@ -9,3 +9,4 @@ edition = "2021"
 r-efi = "4.0.0"
 x86_64 = "0.14.8"
 atomic_refcell = "0.1.3"
+r-efi-alloc = { path= "./r-efi-alloc" }

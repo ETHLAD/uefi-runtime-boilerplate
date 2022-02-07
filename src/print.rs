@@ -1,5 +1,5 @@
-use core::fmt;
 use atomic_refcell::AtomicRefCell;
+use core::fmt;
 use x86_64::instructions::port::PortWriteOnly;
 
 pub struct SERIAL;
