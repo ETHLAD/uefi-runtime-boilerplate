@@ -8,6 +8,13 @@ extern crate alloc;
 
 use alloc::string::*;
 
+#[macro_use]
+mod print;
+use core::char::from_u32;
+
+use r_efi::efi::protocols::simple_text_input::InputKey;
+use r_efi::*;
+
 #[global_allocator]
 static GLOBAL_ALLOCATOR: r_efi_alloc::global::Bridge = r_efi_alloc::global::Bridge::new();
 
@@ -21,17 +28,8 @@ fn rust_panic_handler(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
 
-#[macro_use]
-mod print;
-use core::char::from_u32;
-
-use r_efi::efi;
-use r_efi::efi::protocols::simple_text_input::InputKey;
-
 #[no_mangle]
 pub fn efi_run(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
-    log!("hello from uefi runtime driver!");
-
     for i in 0..10 {
         let mut x = InputKey::default();
         let mut s: usize = 0;
@@ -56,10 +54,10 @@ pub fn efi_run(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
 #[no_mangle]
 pub extern "C" fn efi_main(h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
     unsafe {
-        let mut allocator =
-            r_efi_alloc::alloc::Allocator::from_system_table(st, efi::LOADER_DATA);
+        let mut allocator = r_efi_alloc::alloc::Allocator::from_system_table(st, efi::LOADER_DATA);
         let _attachment = GLOBAL_ALLOCATOR.attach(&mut allocator);
 
+        log!("hello from uefi runtime driver!");
         efi_run(h, st)
     }
 }
