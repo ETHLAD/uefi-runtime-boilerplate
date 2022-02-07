@@ -3,8 +3,10 @@
 
 #[macro_use]
 mod print;
+use core::char::from_u32;
+
 use r_efi::efi;
-use core::fmt::Write;
+use r_efi::efi::protocols::simple_text_input::InputKey;
 
 #[panic_handler]
 fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
@@ -13,15 +15,24 @@ fn panic_handler(_info: &core::panic::PanicInfo) -> ! {
 
 #[no_mangle]
 pub extern "C" fn efi_main(_h: efi::Handle, st: *mut efi::SystemTable) -> efi::Status {
-    log!("hello!");
+    log!("hello from uefi runtime driver!");
     
-    // Wait for key input, by waiting on the `wait_for_key` event hook.
-    let r = unsafe {
-        let mut x: usize = 0;
-        ((*(*st).boot_services).wait_for_event)(1, &mut (*(*st).con_in).wait_for_key, &mut x)
-    };
-    if r.is_error() {
-        return r;
+    loop {
+        let mut x= InputKey::default();
+        let mut s: usize = 0;
+        let _ = unsafe {
+            ((*(*st).boot_services).wait_for_event)(1, &mut (*(*st).con_in).wait_for_key, &mut s)
+        };
+
+        let r = unsafe {
+            ((*(*st).con_in).read_key_stroke)((*st).con_in, &mut x)
+        };
+
+        if r.is_error() {
+            log!("err");
+            return r;
+        }
+        log!("{}", from_u32(x.unicode_char as u32).unwrap());
     }
 
     efi::Status::SUCCESS
