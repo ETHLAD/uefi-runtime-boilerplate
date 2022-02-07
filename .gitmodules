@@ -1,0 +1,3 @@
+[submodule "r-efi-alloc"]
+	path = r-efi-alloc
+	url = git@github.com:morimolymoly/r-efi-alloc.git
